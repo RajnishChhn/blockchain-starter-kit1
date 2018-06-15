@@ -226,7 +226,7 @@ function setupDemo(setupDemo) {
     shipment.contract = factory.newRelationship(NS, 'Contract', 'CON_001');
     return getParticipantRegistry(NS + '.Customer')
         .then(function (customerRegistry) {
-            // add the growers
+            // add the customers
             return customerRegistry.addAll([customer]);
         })
         .then(function() {
