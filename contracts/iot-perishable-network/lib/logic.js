@@ -13,7 +13,7 @@
  */
 
 /**
- * A shipment has been received by an importer
+ * A shipment has been received by the customer
  * @param {org.acme.shipping.perishable.ShipmentReceived} shipmentReceived - the ShipmentReceived transaction
  * @transaction
  */
@@ -68,23 +68,28 @@ function payOut(shipmentReceived) {
     }
 
     //console.log('Payout: ' + payOut);
-    contract.grower.accountBalance += payOut;
-    contract.importer.accountBalance -= payOut;
-
-    //console.log('Grower: ' + contract.grower.$identifier + ' new balance: ' + contract.grower.accountBalance);
-    //console.log('Importer: ' + contract.importer.$identifier + ' new balance: ' + contract.importer.accountBalance);
-
-    return getParticipantRegistry('org.acme.shipping.perishable.Grower')
-        .then(function (growerRegistry) {
-            // update the grower's balance
-            return growerRegistry.update(contract.grower);
+    contract.customer.accountBalance -= payOut;
+    contract.coyote.accountBalance += (payOut*0.3);
+    contract.carrier.accountBalance += (payOut*0.7);
+    
+    return getParticipantRegistry('org.acme.shipping.perishable.Customer')
+        .then(function (customerRegistry) {
+            // update the customer's balance
+            return customerRegistry.update(contract.customer);
         })
         .then(function () {
-            return getParticipantRegistry('org.acme.shipping.perishable.Importer');
+            return getParticipantRegistry('org.acme.shipping.perishable.Coyote');
         })
-        .then(function (importerRegistry) {
-            // update the importer's balance
-            return importerRegistry.update(contract.importer);
+        .then(function (coyoteRegistry) {
+            // update the coyote's balance
+            return coyoteRegistry.update(contract.coyote);
+        })
+        .then(function () {
+            return getParticipantRegistry('org.acme.shipping.perishable.Carrier');
+        })
+        .then(function (carrierRegistry) {
+            // update the carrier's balance
+            return carrierRegistry.update(contract.carrier);
         })
         .then(function () {
             return getAssetRegistry('org.acme.shipping.perishable.Shipment');
@@ -178,32 +183,32 @@ function setupDemo(setupDemo) {
     var factory = getFactory();
     var NS = 'org.acme.shipping.perishable';
 
-    // create the grower
-    var grower = factory.newResource(NS, 'Grower', 'farmer@email.com');
-    var growerAddress = factory.newConcept(NS, 'Address');
-    growerAddress.country = 'USA';
-    grower.address = growerAddress;
-    grower.accountBalance = 0;
+    // create the customer
+    var customer = factory.newResource(NS, 'Customer', 'customer_test@email.com');
+    var customerAddress = factory.newConcept(NS, 'Address');
+    customerAddress.country = 'UK';
+    customer.address = customerAddress;
+    customer.accountBalance = 0;
 
-    // create the importer
-    var importer = factory.newResource(NS, 'Importer', 'supermarket@email.com');
-    var importerAddress = factory.newConcept(NS, 'Address');
-    importerAddress.country = 'UK';
-    importer.address = importerAddress;
-    importer.accountBalance = 0;
+    // create the coyote
+    var coyote = factory.newResource(NS, 'Coyote', 'coyote_test@email.com');
+    var coyoteAddress = factory.newConcept(NS, 'Address');
+    coyoteAddress.country = 'USA';
+    coyote.address = coyoteAddress;
+    coyote.accountBalance = 0;
 
-    // create the shipper
-    var shipper = factory.newResource(NS, 'Shipper', 'shipper@email.com');
-    var shipperAddress = factory.newConcept(NS, 'Address');
-    shipperAddress.country = 'Panama';
-    shipper.address = shipperAddress;
-    shipper.accountBalance = 0;
+    // create the carrier
+    var carrier = factory.newResource(NS, 'Carrier', 'carrier_test@email.com');
+    var carrierAddress = factory.newConcept(NS, 'Address');
+    carrierAddress.country = 'Panama';
+    carrier.address = carrierAddress;
+    carrier.accountBalance = 0;
 
     // create the contract
     var contract = factory.newResource(NS, 'Contract', 'CON_001');
-    contract.grower = factory.newRelationship(NS, 'Grower', 'farmer@email.com');
-    contract.importer = factory.newRelationship(NS, 'Importer', 'supermarket@email.com');
-    contract.shipper = factory.newRelationship(NS, 'Shipper', 'shipper@email.com');
+    contract.customer = factory.newRelationship(NS, 'Customer', 'customer_test@email.com');
+    contract.coyote = factory.newRelationship(NS, 'Coyote', 'coyote_test@email.com');
+    contract.carrier = factory.newRelationship(NS, 'Carrier', 'carrier_test@email.com');
     var tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
@@ -219,24 +224,24 @@ function setupDemo(setupDemo) {
     shipment.status = 'IN_TRANSIT';
     shipment.unitCount = 5000;
     shipment.contract = factory.newRelationship(NS, 'Contract', 'CON_001');
-    return getParticipantRegistry(NS + '.Grower')
-        .then(function (growerRegistry) {
+    return getParticipantRegistry(NS + '.Customer')
+        .then(function (customerRegistry) {
             // add the growers
-            return growerRegistry.addAll([grower]);
+            return customerRegistry.addAll([customer]);
         })
         .then(function() {
-            return getParticipantRegistry(NS + '.Importer');
+            return getParticipantRegistry(NS + '.Coyote');
         })
-        .then(function(importerRegistry) {
-            // add the importers
-            return importerRegistry.addAll([importer]);
+        .then(function(coyoteRegistry) {
+            // add coyote
+            return coyoteRegistry.addAll([coyote]);
         })
         .then(function() {
-            return getParticipantRegistry(NS + '.Shipper');
+            return getParticipantRegistry(NS + '.Carrier');
         })
-        .then(function(shipperRegistry) {
+        .then(function(carrierRegistry) {
             // add the shippers
-            return shipperRegistry.addAll([shipper]);
+            return carrierRegistry.addAll([carrier]);
         })
         .then(function() {
             return getAssetRegistry(NS + '.Contract');
