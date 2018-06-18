@@ -1,0 +1,6 @@
+query FILTER_CUSTOMER {
+  description: "Select all customers having balance more than $100."
+  statement:
+      SELECT org.acme.shipping.perishable.Customer
+          WHERE (accountBalance > 100)
+}
