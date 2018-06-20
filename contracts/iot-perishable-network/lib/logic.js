@@ -184,24 +184,18 @@ function setupDemo(setupDemo) {
     var NS = 'org.acme.shipping.perishable';
 
     // create the customer
-    var customer = factory.newResource(NS, 'Customer', 'customer_test@email.com');
-    var customerAddress = factory.newConcept(NS, 'Address');
-    customerAddress.country = 'UK';
-    customer.address = customerAddress;
+    var customer = factory.newResource(NS, 'Customer', 'customer_test@email.com');        
+    customer.address = 'UK';
     customer.accountBalance = 0;
 
     // create the coyote
     var coyote = factory.newResource(NS, 'Coyote', 'coyote_test@email.com');
-    var coyoteAddress = factory.newConcept(NS, 'Address');
-    coyoteAddress.country = 'USA';
-    coyote.address = coyoteAddress;
+    coyote.address = 'USA';
     coyote.accountBalance = 0;
 
     // create the carrier
     var carrier = factory.newResource(NS, 'Carrier', 'carrier_test@email.com');
-    var carrierAddress = factory.newConcept(NS, 'Address');
-    carrierAddress.country = 'Panama';
-    carrier.address = carrierAddress;
+    carrier.address = 'Panama';
     carrier.accountBalance = 0;
 
     // create the contract

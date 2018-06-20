@@ -106,22 +106,11 @@ asset Contract identified by contractId {
 }
 
 /**
- * A concept for a simple street address
- */
-concept Address {
-  o String city optional
-  o String country
-  o String street optional
-  o String zip optional
-  o String continent optional
-}
-
-/**
  * An abstract participant type in this business network
  */
 abstract participant Business identified by email {
   o String email
-  o Address address
+  o String address
   o Double accountBalance
 }
 
