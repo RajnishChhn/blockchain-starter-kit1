@@ -24,6 +24,15 @@ rule R3_TradersSeeOwnHistoryOnly {
   condition: (v.participantInvoking.getIdentifier() != t.getIdentifier())
   action: DENY
 }
+
+rule R2_EnableTemperatureReadingForCustomer {
+    description: "Enable Customers to submit temperature reading  transactions"
+    participant: "org.acme.shipping.perishable.Customer"
+    operation: CREATE
+    resource: "org.acme.shipping.perishable.TemperatureReading"
+    action: ALLOW
+}
+
 rule NetworkAdminUser {
     description: "Grant business network administrators full access to user resources"
     participant: "org.hyperledger.composer.system.NetworkAdmin"
