@@ -3,7 +3,7 @@
     "composer": "^0.15.0"
   },
   "name": "iot-perishable-network",
-  "version": "0.1.19",
+  "version": "0.1.31",
   "description": "Shipping Perishable Goods Business Network",
   "networkImage": "https://github.com/makotogo/developerWorks/iot-perishable-network/networkimage.svg",
   "networkImageanimated": "https://github.com/makotogo/developerWorks/iot-perishable-network/networkimageanimated.svg",
